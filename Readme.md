@@ -1,0 +1,1 @@
+v1 branch is for 1st version which was developed on static functionalities.
