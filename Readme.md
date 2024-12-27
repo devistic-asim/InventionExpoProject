@@ -1,1 +1,1 @@
-v1 branch is for 1st version which was developed on static functionalities.
+v2 branch is for 2nd version which have dynamic functionalities using MS Access Database.
