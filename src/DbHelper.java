@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbHelper {
-    private static final String DB_URL = "jdbc:ucanaccess://db/BC210200948.accdb";
+    private static final String DB_URL = "jdbc:ucanaccess://assets/BC210200948.accdb";
 
     public static Connection connect() throws SQLException {
         return DriverManager.getConnection(DB_URL);

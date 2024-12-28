@@ -135,7 +135,7 @@ public class MainClass {
     private void deleteAllInventors() {
         int confirm = JOptionPane.showConfirmDialog(frame,
                 "Do you want to remove all inventors' data from the database?",
-                "Confirm Delete",
+                "Select an Option...",
                 JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
