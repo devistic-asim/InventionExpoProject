@@ -9,6 +9,7 @@ public class MainClass {
     private JFrame frame;
     private JTable table;
     private JTextField nameField, scoreField;
+    private JPanel centerPanel;
 
     public MainClass() {
         initialize();
@@ -16,7 +17,7 @@ public class MainClass {
 
     private void initialize() {
         frame = new JFrame("Invention Expo");
-        frame.setSize(600, 400);
+        frame.setSize(700, 500);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -29,61 +30,77 @@ public class MainClass {
             }
         });
 
-        // Input Panel
-        JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+        // Left Panel (Icon and Main Menu buttons)
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setPreferredSize(new Dimension(150, 0));
+
+        // Icon
+        JLabel iconLabel = new JLabel();
+        iconLabel.setIcon(new ImageIcon("assets/medal_icon.png")); // Provide the correct path to your image
+        iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        leftPanel.add(iconLabel, BorderLayout.NORTH);
+
+        // Buttons
+        JPanel menuPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        JButton loadButton = new JButton("Load Data");
+        JButton deleteButton = new JButton("Delete All");
+        JButton winnerButton = new JButton("View Winner");
+
+        loadButton.addActionListener(e -> loadInventors());
+        deleteButton.addActionListener(e -> deleteAllInventors());
+        winnerButton.addActionListener(e -> loadTopWinners());
+
+        menuPanel.add(loadButton);
+        menuPanel.add(deleteButton);
+        menuPanel.add(winnerButton);
+        leftPanel.add(menuPanel, BorderLayout.CENTER);
+
+        frame.add(leftPanel, BorderLayout.WEST);
+
+        // Top Panel (Input Fields)
+        JPanel topPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel nameLabel = new JLabel("Name:");
+        JLabel scoreLabel = new JLabel("Score:");
         nameField = new JTextField();
         scoreField = new JTextField("0");
-
         JButton addButton = new JButton("Add Inventor");
+
         addButton.addActionListener(e -> {
             try {
                 addInventor();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error Message", JOptionPane.ERROR_MESSAGE, UIManager.getIcon("OptionPane.errorIcon"));
+                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error Message", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        inputPanel.add(new JLabel("Name:"));
-        inputPanel.add(nameField);
-        inputPanel.add(new JLabel("Score:"));
-        inputPanel.add(scoreField);
-        inputPanel.add(new JLabel());
-        inputPanel.add(addButton);
+        topPanel.add(nameLabel);
+        topPanel.add(nameField);
+        topPanel.add(scoreLabel);
+        topPanel.add(scoreField);
+        topPanel.add(new JLabel()); // Empty placeholder
+        topPanel.add(addButton);
 
-        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(topPanel, BorderLayout.NORTH);
 
-        // Table
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"#", "Name", "Score"}, 0) {
+        // Center Panel (Table)
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"No", "Name", "Score"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
         table = new JTable(model);
-        frame.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
 
-        // Button Panel
-        JPanel buttonPanel = getjPanel();
+        centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBorder(BorderFactory.createTitledBorder(""));
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
 
-        frame.add(buttonPanel, BorderLayout.SOUTH);
+        frame.add(centerPanel, BorderLayout.CENTER);
 
         frame.setVisible(true);
-    }
-
-    private JPanel getjPanel() {
-        JPanel buttonPanel = new JPanel();
-        JButton loadButton = new JButton("Load Data");
-        JButton deleteButton = new JButton("Delete All");
-        JButton winnerButton = new JButton("View Winners");
-
-        loadButton.addActionListener(e -> loadInventors());
-        deleteButton.addActionListener(e -> deleteAllInventors());
-        winnerButton.addActionListener(e -> loadTopWinners());
-
-        buttonPanel.add(loadButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(winnerButton);
-        return buttonPanel;
     }
 
     private void addInventor() throws SQLException {
@@ -104,9 +121,10 @@ public class MainClass {
 
             if (DbHelper.addInventor(name, score)) {
                 JOptionPane.showMessageDialog(frame, "Inventor added successfully!");
-                loadInventors();
                 nameField.setText("");
                 scoreField.setText("0");
+
+                loadInventors();
             }
             // JOptionPane.showMessageDialog(frame, "Inventor already exists!");
         } catch (NumberFormatException e) {
@@ -116,6 +134,7 @@ public class MainClass {
 
     private void loadInventors() {
         try {
+            centerPanel.setBorder(BorderFactory.createTitledBorder("All Inventors!"));
             List<Inventor> inventors = DbHelper.getInventors();
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
@@ -151,6 +170,7 @@ public class MainClass {
 
     private void loadTopWinners() {
         try {
+            centerPanel.setBorder(BorderFactory.createTitledBorder("Winners List!"));
             List<Inventor> winners = DbHelper.getTopWinners();
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
