@@ -24,7 +24,7 @@ public class MainClass {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                JOptionPane.showMessageDialog(frame, "Student ID: 12345\nName: John Doe");
+                JOptionPane.showMessageDialog(frame, "Thank for using Invention Expo.\nDeveloped by Muhammad Asim (BC210200948)");
                 System.exit(0);
             }
         });
@@ -39,7 +39,7 @@ public class MainClass {
             try {
                 addInventor();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage());
+                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error Message", JOptionPane.ERROR_MESSAGE, UIManager.getIcon("OptionPane.errorIcon"));
             }
         });
 
@@ -53,17 +53,13 @@ public class MainClass {
         frame.add(inputPanel, BorderLayout.NORTH);
 
         // Table
-        // Create table with initial model
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"#", "Name", "Score"}, 0);
-        table = new JTable(model);
-        // Make all cells non-editable
-        model = new DefaultTableModel(new Object[]{"#", "Name", "Score"}, 0) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"#", "Name", "Score"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // All cells are non-editable
+                return false;
             }
         };
-        table.setModel(model);
+        table = new JTable(model);
         frame.add(new JScrollPane(table), BorderLayout.CENTER);
 
         // Button Panel
@@ -94,7 +90,7 @@ public class MainClass {
         String name = nameField.getText().trim();
         String scoreStr = scoreField.getText().trim();
         if (name.isEmpty() || scoreStr.isEmpty()) {
-            JOptionPane.showMessageDialog(frame, "Fields cannot be empty!");
+            JOptionPane.showMessageDialog(frame, "Fields cannot be empty!", "Validation Message", JOptionPane.WARNING_MESSAGE, UIManager.getIcon("OptionPane.warningIcon"));
             return;
         }
         name = capitalizeFirstLetter(name);
@@ -102,20 +98,19 @@ public class MainClass {
         try {
             int score = Integer.parseInt(scoreStr);
             if (score < 1 || score > 100) {
-                JOptionPane.showMessageDialog(frame, "Score must be between 1 and 100!");
+                JOptionPane.showMessageDialog(frame, "Score must be between 1 and 100!", "Validation Message", JOptionPane.WARNING_MESSAGE, UIManager.getIcon("OptionPane.warningIcon"));
                 return;
             }
 
             if (DbHelper.addInventor(name, score)) {
                 JOptionPane.showMessageDialog(frame, "Inventor added successfully!");
-                // JOptionPane.showMessageDialog(frame, "This is an information message", "Information", JOptionPane.INFORMATION_MESSAGE);
                 loadInventors();
                 nameField.setText("");
                 scoreField.setText("0");
             }
             // JOptionPane.showMessageDialog(frame, "Inventor already exists!");
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, "Score must be a valid number!");
+            JOptionPane.showMessageDialog(frame, "Score must be a valid number!", "Validation Message", JOptionPane.WARNING_MESSAGE, UIManager.getIcon("OptionPane.warningIcon"));
         }
     }
 
@@ -124,8 +119,8 @@ public class MainClass {
             List<Inventor> inventors = DbHelper.getInventors();
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
-            int rowNum = 1;
             if (!inventors.isEmpty()) {
+                int rowNum = 1;
                 for (Inventor inventor : inventors) {
                     model.addRow(new Object[]{rowNum++, inventor.getName(), inventor.getScore()});
                 }
@@ -133,7 +128,7 @@ public class MainClass {
                 JOptionPane.showMessageDialog(frame, "No inventors found!");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Error loading data: " + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage(), "Error Message", JOptionPane.ERROR_MESSAGE, UIManager.getIcon("OptionPane.errorIcon"));
         }
     }
 
@@ -149,7 +144,7 @@ public class MainClass {
                 JOptionPane.showMessageDialog(frame, "All inventors deleted successfully!");
                 loadInventors();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(frame, "Error deleting data: " + e.getMessage());
+                JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage(), "Error Message", JOptionPane.ERROR_MESSAGE, UIManager.getIcon("OptionPane.errorIcon"));
             }
         }
     }
@@ -159,13 +154,17 @@ public class MainClass {
             List<Inventor> winners = DbHelper.getTopWinners();
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
-            int rowNum = 1;
-            for (Inventor winner : winners) {
-                model.addRow(new Object[]{rowNum++, winner.getName(), winner.getScore()});
+            if (!winners.isEmpty()) {
+                int rowNum = 1;
+                for (Inventor winner : winners) {
+                    model.addRow(new Object[]{rowNum++, winner.getName(), winner.getScore()});
+                }
+                JOptionPane.showMessageDialog(frame, "Winners loaded successfully!");
+            } else {
+                JOptionPane.showMessageDialog(frame, "No winner found!");
             }
-            JOptionPane.showMessageDialog(frame, "Winners loaded successfully!");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Error loading winners: " + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage(), "Error Message", JOptionPane.ERROR_MESSAGE, UIManager.getIcon("OptionPane.errorIcon"));
         }
     }
 

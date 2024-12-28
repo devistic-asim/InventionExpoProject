@@ -1,16 +1,10 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DbHelper {
-    // Path to your Access database
     private static final String DB_URL = "jdbc:ucanaccess://db/BC210200948.accdb";
 
-    // Method to establish a connection to the database
     public static Connection connect() throws SQLException {
         return DriverManager.getConnection(DB_URL);
     }
